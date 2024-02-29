@@ -74,9 +74,14 @@ def invoke(area=None, resource=None,
     for resource_area in resource_areas:
         if resource_area.name.lower() == area.lower():
             client_url = resource_area.location_url
-
+    
+    # --------------------------------------------------------------------------------------------
+    # sskoklev: Fix as suggested in https://github.com/Azure/azure-devops-cli-extension/issues/1011#issuecomment-914718013.
+    # --------------------------------------------------------------------------------------------    
     if not client_url:
-        raise CLIError('--area is not present in current organization')
+        for resource_area in resource_areas:
+            if resource_area.name.lower() == 'core':
+                client_url = resource_area.location_url
 
     client = Client(client_url, connection._creds)
 
